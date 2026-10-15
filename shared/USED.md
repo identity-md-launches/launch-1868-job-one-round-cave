@@ -63,3 +63,20 @@ The previous gathering's reuse record above is retained as history.
   its tests. The original snapshot is retained.
 - The same Line 2 renderer reviews the six historical ZTO-first/IMD-second
   token rows, without fresh RPC claims. No line source or old record changed.
+
+# Gathering 24 reuse
+
+- Copied Line 2's Step 24 CSV Merge into `import-drift/merge.py`, adapting only
+  the reconciler import to this shared folder.
+- Copied Line 3's Step 24 Import Impact into `import-drift/impact.py`, adapting
+  only the mapper path. `import-drift/handoff.py` merges two import snapshot
+  edits, verifies the resulting source tree and traces changed modules to
+  affected entry points. It blocks impact on conflicts or a source mismatch.
+- Refreshed `token-read-plan/abi_workbench.py` byte-for-byte from Line 4's
+  Step 24 array-capable codec. The existing read plan and retained historical
+  ZTO/IMD CSV are unchanged; the ten token checks still pass.
+- Line 1's TLS Route was exercised live alongside Endpoint and Deadline Sentry.
+  Its separate DNS/TCP/TLS stage report complements the shared source handoff;
+  no copy is needed for the offline import or token interfaces.
+
+No line folder was modified.

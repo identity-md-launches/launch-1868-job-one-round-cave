@@ -101,3 +101,13 @@ identical to `observed.csv`. No new chain observation is claimed in this round.
 Line 2's renderer is shared at `shared/import-drift/review.py`; its six-row
 [offline review](observed-review23.html) preserves exact strings and composite
 keys. See Import Drift's README for the command. No new coin is needed.
+
+## Gathering 24 refresh
+
+`abi_workbench.py` is now a byte-identical copy of Line 4's Step 24 version,
+including one-dimensional fixed and dynamic arrays of static scalars. The
+token plan still uses only scalar and string return values, so its six
+historical ZTO-first/IMD-second CSV rows remain byte-for-byte the same.
+Its ten offline checks pass. This refresh makes the newer ABI codec available
+to another worker without changing the historical observation or making a
+current-chain claim.

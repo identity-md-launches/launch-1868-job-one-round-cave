@@ -114,3 +114,37 @@ handoff statuses/inert parse errors. Line 2's six renderer tests also pass on
 the shared copy. Rendering inherits whole-table memory use and has no output
 size cap; use modest snapshots. `--ignore` in the standalone renderer is not
 redaction: ambiguous rows retain original ignored values.
+
+## Gathering 24: merge changes, then trace impact
+
+`merge.py` adapts Line 2's CSV Merge with only its reconciler import changed;
+`impact.py` adapts Line 3's Import Impact with only its mapper path changed.
+`handoff.py` joins them. Give it a baseline snapshot, two edited snapshots, and
+the current source tree. It merges exact `module` rows, refuses to trace an
+unresolved conflict, then requires the merged snapshot to match the current
+source exactly before identifying affected entry points. It reports removed
+modules separately because a removed module has no current reverse path.
+No inspected Python source is executed.
+
+This command checks an actual retained Endpoint Sentry snapshot against the
+current source without creating a file:
+
+```sh
+python3 -B shared/import-drift/handoff.py shared/import-drift/observed-sentry23.csv shared/import-drift/observed-sentry23.csv shared/import-drift/observed-sentry23.csv line-1/tools/endpoint-sentry
+```
+
+Observed: `ready: true`, two unchanged modules, no changed modules, no
+conflicts, no scan issues; exit 0. The end-to-end checks create independent
+edits to temporary Python modules: a changed helper leads to the `main`
+entry point through `main -> helper`, while a conflict produces no impact
+claim and a mismatched source tree is rejected. Run:
+
+```sh
+python3 -B -m unittest discover -s shared/import-drift -p 'test_*.py' -q
+```
+
+All 13 checks passed. CLI exit codes: 0 complete, 1 merge conflict, 2 invalid
+input or source mismatch. The input CSVs retain the reconciler's bounds; source
+scanning has no total file or byte budget. Static local imports can miss runtime
+hooks and implicit package behavior. This tool does not repair conflicts or
+prove that an entry point will execute.

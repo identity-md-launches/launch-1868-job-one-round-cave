@@ -66,12 +66,13 @@ def main():
                 continue
             painted += 1
             if key not in previews:
-                # Round 23 inputs are supplied PNGs. Older previews are retained
+                # Current inputs are supplied PNGs. Older previews are retained
                 # from the existing gallery; a missing historical preview fails.
-                source = Path('artifacts', wall, 'wall-v3.png')
-                if path.stem != '23' or not source.is_file():
+                version = {'23': 'v3', '24': 'v4'}.get(path.stem)
+                source = Path('artifacts', wall, f'wall-{version}.png') if version else None
+                if source is None or not source.is_file():
                     raise ValueError(f'missing embedded historical preview: {key}')
-                jpeg = subprocess.run(['node', 'gathering/thumbnail.js', str(source), '96', '50'],
+                jpeg = subprocess.run(['node', 'gathering/thumbnail.js', str(source), '96', '40'],
                                       capture_output=True, check=True).stdout
                 previews[key] = 'data:image/jpeg;base64,' + base64.b64encode(jpeg).decode('ascii')
             attrs = {a['trait_type']: a['value'] for a in record['attributes']}

@@ -5,28 +5,36 @@
       1254,
       1254
     ],
-    "sha256": "8a6da8f7edad72e85323fa9f58a5c906eb59a4eecad2eecf049874567981c9f0",
-    "bytes": 2667811
+    "format": "PNG",
+    "sha256": "e7a3fd8ca98f132c65b60585e268f685a9b9823183c986037463581666975880",
+    "bytes": 3993832
   },
   "jpeg": {
     "dimensions": [
       512,
       512
     ],
-    "bytes": 59404
+    "bytes": 59533,
+    "format": "JPEG"
   },
-  "gallery_records": 115,
-  "painted_previews": 15,
+  "gallery_records": 120,
+  "painted_previews": 20,
   "placeholders": 100,
-  "gallery_bytes": 80809,
+  "gallery_bytes": 98523,
   "visual_certification": false,
   "line_files_unchanged": true,
-  "line_tests_passed": 84,
-  "shared_tests_passed": 20,
-  "shared_renderer_tests_passed": 6,
-  "unmet_visual_requirements": [
-    "Exact pixel preservation outside the new mark is not achieved by generative editing; composition was visually reviewed."
+  "line_tests_passed": 109,
+  "shared_tests_passed": 23,
+  "unmet_visual_requirements": [],
+  "visual_review": "The two visible Pepe hands each have five digits; no new hands. See VISUAL_REVIEW.md.",
+  "changed_pixels_vs_ancestor": 11986,
+  "changed_bounds": [
+    416,
+    182,
+    618,
+    337
   ],
+  "changed_pixels_outside_new_mark": 0,
   "inherited_size_exception": {
     "path": "dist/line-4/01.jpg",
     "bytes": 143560,
