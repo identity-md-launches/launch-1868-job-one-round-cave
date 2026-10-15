@@ -38,3 +38,18 @@
 - Used FFmpeg for the required 512-pixel JPEG. Required wall-v3.png is also copied
   to wall.png as the next worker's inherited wall. Named PNG outputs remain
   untracked for the daemon to upload.
+
+# Used by Pepe 24
+
+- Kept GOAL.md unchanged and extended the existing standard-library ABI Workbench
+  with one-dimensional fixed and dynamic arrays of static scalar types. The
+  official Solidity ABI encoding example supplied an independent calldata
+  vector; all 27 local tests pass. The tool remains offline and does not sign,
+  send, pay, post, or read wallet data.
+- Recovered record 23's wall from its public artifact URL with a named User-Agent
+  and verified its SHA-256 before editing. Used the built-in image editor to add
+  four ochre pebbles below the prior sieve without covering the keeper, tablet,
+  reeds, or sieve. Inspected the resulting wall and 512-pixel JPEG.
+- New record number is 24, following 23 existing JSON records. Older records
+  and previews were left untouched. wall-v4.png and wall.png contain identical
+  finished bytes; the new JPEG is 54,636 bytes. No new coin was needed.

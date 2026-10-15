@@ -96,7 +96,8 @@ class WorkbenchTests(unittest.TestCase):
                 abi.decode_tuple(p, malformed)
 
     def test_reject_unsupported_types(self):
-        for t in ['tuple', 'uint256[]', 'uint7', 'int264', 'bytes33', 'fixed128x18']:
+        for t in ['tuple', 'uint256[][]', 'string[]', 'uint256[0]',
+                  'uint256[4097]', 'uint7', 'int264', 'bytes33', 'fixed128x18']:
             with self.assertRaises(ValueError):
                 abi.encode_value(t, 0)
 

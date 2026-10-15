@@ -13,10 +13,11 @@ From the repository root:
 python3 -B -m unittest discover -s line-4/tools/abi-workbench -v
 ```
 
-This runs 23 regression tests, including the gathering's defect reports,
+This runs 27 regression tests, including the gathering's defect reports,
 all 32 integer widths, malformed output checks, and eight Keccak vectors
 independently obtained using `cast keccak` (Cast is not needed to run the tests).
-All 23 passed locally, including 11 new input-boundary tests. The original demo also passed:
+All 27 passed locally, including 11 input-boundary tests and four scalar-array
+tests. The original demo also passed:
 
 ```sh
 python3 -B line-4/tools/abi-workbench/abi_workbench.py --demo
@@ -25,6 +26,20 @@ python3 -B line-4/tools/abi-workbench/abi_workbench.py --demo
 The demo's transfer **argument** is the real ZTO address; it is only a formatting
 example, not a destination envelope or an executed token transfer. Its amount is
 illustrative, not a balance or price. It prints `0xa9059cbb` and complete calldata.
+
+Pepe 24 added one-dimensional arrays of static scalar types, both fixed
+(`uint8[2]`) and dynamic (`uint8[]`). The included `array-example.json`
+reproduces the published Solidity ABI example without connecting to a chain:
+
+```sh
+python3 -B line-4/tools/abi-workbench/abi_workbench.py encode --abi line-4/tools/abi-workbench/array-example.json --function f --args '[291,[1110,1929],"0x31323334353637383930","0x48656c6c6f2c20776f726c6421"]'
+```
+
+Tried locally: this prints selector `0x8be65246` and the calldata bytes from
+the [Solidity ABI specification](https://docs.soliditylang.org/en/latest/abi-spec.html#use-of-dynamic-types).
+The new tests also check a fixed array followed by a dynamic array using ZTO
+and IMD addresses, empty arrays, invalid counts, truncated return arrays, and
+invalid element words. The output of `decode` represents arrays as JSON arrays.
 
 An included ABI exercises canonical alias handling:
 
@@ -42,6 +57,9 @@ are rejected. JSON numeric exponents parse as floats and are rejected too.
 
 Supports `address`, `bool`, `int`/`uint` (canonicalized to 256 bits), widths
 8 through 256 in steps of 8, `bytes1` through `bytes32`, `string`, and `bytes`.
+One-dimensional fixed and dynamic arrays of `address`, `bool`, `int`/`uint`
+and fixed bytes are supported, with a 4,096-item maximum. Fixed arrays occupy
+their full number of head words; dynamic arrays use a length-prefixed tail.
 The new repair combines Keccak's padding bits at the 135-byte boundary, avoids
 lossy integer conversion, canonicalizes aliases before selector hashing, and
 rejects signed words with invalid sign extension. Additional checks reject
@@ -49,8 +67,8 @@ nonzero address/bytes padding, dynamic offsets into the head, missing tail
 padding, and nonzero dynamic padding. Direct `encode_value` calls now use the
 same type validation as the CLI.
 
-Tuples, arrays, events, fixed point and ambiguous overloaded names are explicitly
-unsupported. The decoder does not enforce a unique ordering of dynamic tails,
+Tuples, nested arrays, arrays of `string` or dynamic `bytes`, events, fixed
+point and ambiguous overloaded names are explicitly unsupported. The decoder does not enforce a unique ordering of dynamic tails,
 reject shared tails, or reject every surplus word; it is not a full strict-mode
 ABI validator. ABI files are limited to 1 MiB before parsing. Argument JSON and return bytes
 are still held in memory without a total size budget. This is a
@@ -73,7 +91,8 @@ Paths outside the current workspace, including resolved symlinks, are rejected
 before opening. This path check is for trusted local CLI use, not isolation
 against concurrent malicious filesystem changes or special files.
 
-Tried locally: 23 tests passed; the demo and alias `transfer` example still
+At Pepe 23, 23 tests passed; the demo and alias `transfer` example still
 produce selector `0xa9059cbb`. Real CLI calls with an object-shaped ABI and a
 missing ABI both produced exit 2 and one error line. No RPC was needed for this
-repair, and no signing or transaction submission capability was added.
+repair, and no signing or transaction submission capability was added. Pepe 24's
+array extension brings the passing total to 27.

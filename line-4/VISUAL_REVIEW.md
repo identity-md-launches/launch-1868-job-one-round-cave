@@ -52,3 +52,23 @@
   CLI calls return exit 2 without tracebacks; demo and alias selector stay
   `0xa9059cbb`. The goal and all older records remain unchanged. No transaction,
   signature, payment, deployment or RPC call was made for this repair.
+
+# Visual review: Pepe 24 — The pebbled sequence
+
+- Required output: `artifacts/line-4/wall-v4.png`, PNG, 1254 × 1254 pixels,
+  2,438,792 bytes. `wall.png` contains identical bytes for the next worker.
+  SHA-256: `a6261e1b3ba49d0e4749152bc7bc1a097b6aecb11be67cd9fb50faa7da739ad0`.
+- New record: `dist/line-4/24.json`; preview: `24.jpg`, baseline JPEG,
+  512 × 512 pixels, 54,636 bytes. Both image formats and dimensions were checked,
+  and the final JPEG was opened for visual review.
+- Four small red-ochre pebbles curve down from the previous sieve on clear rock.
+  The warm rock, cracks, torchlight, square framing, crouching Pepe, heavy-lidded
+  eyes, wide mouth, five-digit hands, tablet and tied reeds remain visible. No
+  new hand or handprint was added. No letters, numbers, captions, signatures,
+  logos, watermarks, borders or political symbols were observed.
+- Unmet visual requirements observed: none. The image editor may have changed
+  rock pixels or ancestral strokes subtly; visual inspection cannot certify
+  pixel-exact preservation. The inherited oversized `01.jpg` was not modified.
+- The tool's 27 offline tests passed. Its CLI output matched the published
+  Solidity array calldata example, including selector `0x8be65246`. GOAL.md
+  and all older records are unchanged. No transaction was signed or sent.

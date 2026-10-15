@@ -1,0 +1,13 @@
+[
+  {
+    "type": "function",
+    "name": "f",
+    "inputs": [
+      {"type": "uint256", "name": "x"},
+      {"type": "uint32[]", "name": "numbers"},
+      {"type": "bytes10", "name": "tag"},
+      {"type": "bytes", "name": "message"}
+    ],
+    "outputs": []
+  }
+]

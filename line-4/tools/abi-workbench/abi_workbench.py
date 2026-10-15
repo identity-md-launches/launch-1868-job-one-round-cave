@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 MAX_ABI_BYTES = 1024 * 1024
+MAX_ARRAY_ITEMS = 4096
 
 MASK = (1 << 64) - 1
 ROT = [0, 1, 62, 28, 27, 36, 44, 6, 55, 20, 3, 10, 43, 25, 39, 41, 45, 15, 21, 8, 18, 2, 61, 56, 14]
@@ -48,11 +49,32 @@ def canonical(param):
         raise ValueError('ABI parameter type must be a string')
     if t.startswith('tuple'):
         raise ValueError('tuple types are not supported in this compact tool')
+    array = re.fullmatch(r'(.+)\[([0-9]*)\]', t)
+    if array:
+        base, count = array.groups()
+        # This step supports one-dimensional arrays of static scalar elements.
+        if '[' in base or base in ('string', 'bytes'):
+            raise ValueError(f'unsupported ABI type: {t!r}')
+        base = canonical({'type': base})
+        if count:
+            if len(count) > 4 or count[0] == '0' or not 1 <= int(count) <= MAX_ARRAY_ITEMS:
+                raise ValueError(f'array length must be 1..{MAX_ARRAY_ITEMS}')
+        return base + '[' + count + ']'
     if not re.fullmatch(r'(address|bool|string|bytes|bytes(?:[1-9]|[12][0-9]|3[0-2])|u?int(?:8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?)', t):
         raise ValueError(f'unsupported ABI type: {t!r}')
     return {'uint': 'uint256', 'int': 'int256'}.get(t, t)
 
-def dynamic(t): return t in ('string', 'bytes')
+def array_parts(t):
+    match = re.fullmatch(r'(.+)\[([0-9]*)\]', t)
+    return (match.group(1), int(match.group(2)) if match.group(2) else None) if match else None
+
+def dynamic(t):
+    parts = array_parts(t)
+    return t in ('string', 'bytes') or (parts is not None and parts[1] is None)
+
+def head_words(t):
+    parts = array_parts(t)
+    return 1 if dynamic(t) else (parts[1] if parts else 1)
 
 def word(n):
     if n < 0 or n >= 1 << 256: raise ValueError('ABI word is outside uint256 range')
@@ -60,6 +82,14 @@ def word(n):
 
 def encode_value(t, value):
     t = canonical({'type': t})
+    parts = array_parts(t)
+    if parts:
+        base, count = parts
+        if not isinstance(value, list): raise ValueError(f'{t} argument must be a JSON array')
+        if len(value) > MAX_ARRAY_ITEMS: raise ValueError(f'array exceeds {MAX_ARRAY_ITEMS} items')
+        if count is not None and len(value) != count: raise ValueError(f'{t} requires exactly {count} items')
+        payload = b''.join(encode_value(base, item) for item in value)
+        return (word(len(value)) if count is None else b'') + payload
     if t == 'address':
         if not isinstance(value, str) or not re.fullmatch(r'0x[0-9a-fA-F]{40}', value): raise ValueError('address must be 0x followed by 40 hex digits')
         return bytes.fromhex(value[2:]).rjust(32, b'\0')
@@ -96,51 +126,69 @@ def encode_value(t, value):
 
 def encode_tuple(params, values):
     if len(params) != len(values): raise ValueError(f'expected {len(params)} arguments, received {len(values)}')
-    head_size = 32 * len(params)
+    types = [canonical(p) for p in params]
+    head_size = 32 * sum(head_words(t) for t in types)
     head, tail = bytearray(), bytearray()
-    for p, v in zip(params, values):
-        t = canonical(p)
+    for t, v in zip(types, values):
         if dynamic(t):
             encoded = encode_value(t, v)
             head.extend(word(head_size + len(tail))); tail.extend(encoded)
         else: head.extend(encode_value(t, v))
     return bytes(head + tail)
 
+def decode_scalar(t, w):
+    if t=='address':
+        if any(w[:12]): raise ValueError('invalid high bits for address')
+        val='0x'+w[-20:].hex()
+    elif t=='bool':
+        n=int.from_bytes(w,'big')
+        if n not in (0,1): raise ValueError('invalid encoded bool')
+        val=bool(n)
+    elif t.startswith('bytes') and t!='bytes':
+        n=int(t[5:])
+        if any(w[n:]): raise ValueError(f'invalid padding for {t}')
+        val='0x'+w[:n].hex()
+    else:
+        signed=t.startswith('int'); bits=int(re.search(r'[0-9]+$',t).group(0)) if re.search(r'[0-9]+$',t) else 256
+        n=int.from_bytes(w,'big')
+        if signed and n & (1 << 255): n-=1 << 256
+        lo, hi = (-(1 << (bits-1)), (1 << (bits-1))-1) if signed else (0, (1 << bits)-1)
+        if not lo <= n <= hi: raise ValueError(f'invalid high bits or sign extension for {t}')
+        val=n
+    return val
+
 def decode_tuple(params, data):
     if len(data) % 32: raise ValueError('return data must be whole 32-byte words')
-    out=[]
-    for i,p in enumerate(params):
-        t=canonical(p); pos=i*32
-        if pos+32 > len(data): raise ValueError('return data is shorter than the ABI output head')
-        w=data[pos:pos+32]
+    types = [canonical(p) for p in params]
+    head_size = 32 * sum(head_words(t) for t in types)
+    if len(data) < head_size: raise ValueError('return data is shorter than the ABI output head')
+    out=[]; pos=0
+    for i,(p,t) in enumerate(zip(params, types)):
+        parts = array_parts(t)
         if dynamic(t):
-            off=int.from_bytes(w,'big')
-            if off < 32 * len(params) or off%32 or off+32>len(data): raise ValueError('invalid dynamic return offset')
-            n=int.from_bytes(data[off:off+32],'big'); raw=data[off+32:off+32+n]
-            end = off + 32 + n
-            padded_end = end + (-n) % 32
-            if len(raw)!=n or padded_end > len(data): raise ValueError('truncated dynamic return value')
-            if any(data[end:padded_end]): raise ValueError('nonzero dynamic return padding')
-            val=raw.decode('utf-8') if t=='string' else '0x'+raw.hex()
-        elif t=='address':
-            if any(w[:12]): raise ValueError('invalid high bits for address')
-            val='0x'+w[-20:].hex()
-        elif t=='bool':
-            n=int.from_bytes(w,'big')
-            if n not in (0,1): raise ValueError('invalid encoded bool')
-            val=bool(n)
-        elif t.startswith('bytes') and t!='bytes':
-            n=int(t[5:])
-            if any(w[n:]): raise ValueError(f'invalid padding for {t}')
-            val='0x'+w[:n].hex()
+            off=int.from_bytes(data[pos:pos+32],'big')
+            if off < head_size or off%32 or off+32>len(data): raise ValueError('invalid dynamic return offset')
+            n=int.from_bytes(data[off:off+32],'big')
+            if parts:
+                if n > MAX_ARRAY_ITEMS: raise ValueError(f'array exceeds {MAX_ARRAY_ITEMS} items')
+                end = off + 32 + 32*n
+                if end > len(data): raise ValueError('truncated dynamic return array')
+                base = parts[0]
+                val=[decode_scalar(base, data[j:j+32]) for j in range(off+32, end, 32)]
+            else:
+                raw=data[off+32:off+32+n]
+                end = off + 32 + n
+                padded_end = end + (-n) % 32
+                if len(raw)!=n or padded_end > len(data): raise ValueError('truncated dynamic return value')
+                if any(data[end:padded_end]): raise ValueError('nonzero dynamic return padding')
+                val=raw.decode('utf-8') if t=='string' else '0x'+raw.hex()
+        elif parts:
+            base, count = parts
+            val=[decode_scalar(base, data[j:j+32]) for j in range(pos, pos+32*count, 32)]
         else:
-            signed=t.startswith('int'); bits=int(re.search(r'[0-9]+$',t).group(0)) if re.search(r'[0-9]+$',t) else 256
-            n=int.from_bytes(w,'big')
-            if signed and n & (1 << 255): n-=1 << 256
-            lo, hi = (-(1 << (bits-1)), (1 << (bits-1))-1) if signed else (0, (1 << bits)-1)
-            if not lo <= n <= hi: raise ValueError(f'invalid high bits or sign extension for {t}')
-            val=n
+            val=decode_scalar(t, data[pos:pos+32])
         out.append({'name':p.get('name') or f'arg{i}', 'type':t, 'value':val})
+        pos += 32 * head_words(t)
     return out
 
 def unique_object(pairs):
