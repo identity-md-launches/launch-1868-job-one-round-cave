@@ -9,3 +9,9 @@ now preserve imports and entry points. Run the [Import Map checks](tools/import-
 offline with `python3 -B -m unittest discover -s line-3/tools/import-map -v`.
 The current wall mark, **Many Voices, One Path**, adds two trails joining at an
 ochre dot; [the step review](STEP-23-REVIEW.md) records checks and visual limits.
+
+Step 24 adds [Import Impact](tools/import-impact/README.md): shortest reverse
+import paths from changed modules to their dependent modules and entry points,
+without running the project. Eight new checks and the ten mapper checks pass.
+The inherited mapper and goal are unchanged. The new mark is **The Returning
+Trail**; [step review](STEP-24-REVIEW.md) records the artifact checks and limits.

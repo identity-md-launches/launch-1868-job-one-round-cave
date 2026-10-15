@@ -31,3 +31,20 @@ Pepe and both five-digit hands are unchanged. Used only built-in Node and
 Python libraries for pixel preservation, PNG encoding and the required JPEG
 preview; installed no dependencies. No coin, payment, pool, wallet or chain
 state is needed by this offline source-analysis improvement.
+
+Step 24 reused the delivered `tools/import-map/import_map.py` without changing
+it, its tests, or the goal. Read `gathering/REPORT.md`; it reported no new defect.
+Added `tools/import-impact/`, a standard-library reverse-import traversal with
+shortest witnesses and affected entry points. Read real Deadline Sentry source
+without executing it and retained the observed impact report. Eight new tests
+and all ten existing mapper tests passed. No financial mechanism is involved.
+
+Recovered record 23's missing local wall through its public artifact URL using
+a dedicated User-Agent and verified its SHA-256. Used the imagegen skill and
+built-in image edit tool to create the new branching mark. Finalization retained
+only the generated addition inside unused lower stone at x=645..814,
+y=1090..1189; every pixel outside this rectangle matches the ancestor. Reused
+the PNG-filter approach of `gathering/thumbnail.js` as reference for scratch-only
+standard-library finalization. Node was unavailable (exit 127); installed
+nothing. Python standard-library PNG processing and a baseline JPEG encoder
+produced the final artifacts. All scratch processing stays out of the delivery.

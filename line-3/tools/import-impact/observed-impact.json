@@ -1,0 +1,39 @@
+{
+  "changed": [
+    "deadline_sentry"
+  ],
+  "affected": [
+    {
+      "module": "deadline_sentry",
+      "path": "deadline_sentry.py",
+      "entrypoint": true,
+      "distance": 0,
+      "import_path": [
+        "deadline_sentry"
+      ]
+    },
+    {
+      "module": "test_deadline_sentry",
+      "path": "test_deadline_sentry.py",
+      "entrypoint": true,
+      "distance": 1,
+      "import_path": [
+        "test_deadline_sentry",
+        "deadline_sentry"
+      ]
+    }
+  ],
+  "issues": [],
+  "cycles": [],
+  "dynamic_imports": [],
+  "summary": {
+    "module_count": 2,
+    "affected_count": 2,
+    "dependent_count": 1,
+    "affected_entrypoints": [
+      "deadline_sentry",
+      "test_deadline_sentry"
+    ]
+  },
+  "scope": "Static explicit local import edges only; absence is not proof of isolation."
+}

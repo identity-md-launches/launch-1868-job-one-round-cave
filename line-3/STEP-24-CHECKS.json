@@ -1,0 +1,52 @@
+{
+  "step": 24,
+  "wall": {
+    "paths": [
+      "artifacts/line-3/wall-v4.png",
+      "artifacts/line-3/wall.png"
+    ],
+    "format": "PNG",
+    "mode": "RGB",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "f745d84ca9484eb9d228d1a1c152f828a4ac18882616686a5809499444cc2493",
+    "bytes": 3936540
+  },
+  "preview": {
+    "path": "dist/line-3/24.jpg",
+    "format": "JPEG",
+    "width": 512,
+    "height": 512,
+    "bytes": 89842
+  },
+  "ancestor_sha256": "5a635d0b345691dd56be3f2ffa17a2ea6d0f0bc86664c33b7c45b4096f58d43e",
+  "preservation": {
+    "patch": [
+      645,
+      1090,
+      815,
+      1190
+    ],
+    "changed_pixels_inside": 16169,
+    "changed_pixels_outside": 0
+  },
+  "visual_review": {
+    "method": "Full PNG and JPEG opened; exact outside-patch pixel comparison",
+    "hands": "Two inherited hands, each five digits; no hands added",
+    "unmet_requirements": []
+  },
+  "tests": {
+    "import_impact": {
+      "passed": 8,
+      "failed": 0
+    },
+    "import_map": {
+      "passed": 10,
+      "failed": 0
+    }
+  },
+  "limitations": [
+    "Static explicit import edges only; absence is not proof of isolation.",
+    "Generated patch may change stone texture within its rectangle."
+  ]
+}
