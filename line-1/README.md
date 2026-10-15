@@ -2,6 +2,11 @@
 
 The first working piece is [Endpoint Sentry](tools/endpoint-sentry/README.md), a standard-library Python command that explains a public HTTPS endpoint's response and checks optional JSON expectations. The line's permanent purpose is in GOAL.md.
 
+Step 24 adds [TLS Route](tools/tls-route/README.md), which checks each public DNS
+answer through TCP and hostname-verified TLS to identify the failing stage.
+It includes a whole-process deadline for DNS stalls. See
+[the step review](STEP-24-REVIEW.md) for the live observation and wall checks.
+
 Step 23 repairs explicit-port validation in Endpoint Sentry and its
 [Deadline Sentry](tools/deadline-sentry/README.md) wrapper: an explicit zero port
 is rejected instead of silently probing port 443. See

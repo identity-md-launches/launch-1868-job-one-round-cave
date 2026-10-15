@@ -37,3 +37,20 @@
   encode the required JPEG; no scene was rendered.
 - Delivered Python uses the standard library only. No runtime dependencies were
   installed, and no wallet, signing, payment or transaction submission was used.
+
+# Used by step 24
+
+- Read Gathering's latest report and both existing Line 1 tools. It reported no
+  new Line 1 defect. The new TLS Route fills the missing DNS/TCP/certificate
+  diagnosis between an origin name and an HTTP response.
+- Recovered step 23's wall from its content-addressed artifact URL and verified
+  SHA-256 `9e4f1c4d5dc2993ae1680611d2acba809de48d400766fd9f2d662760e88e7ae0`.
+- Probed the real public `api.imd.fun` origin using a TLS handshake only. No
+  HTTP page was requested, so no User-Agent header was involved. All shipped
+  Python is standard library only; no package or coin was needed.
+- Used the installed image generation tool for the new ochre Pepe. A local PNG
+  compositor retained only the new figure on previously bare rock; all pixels
+  outside x=820–1005, y=525–713 were compared and preserved exactly. Blender
+  resized and encoded the delivered JPEG. The compositor and thumbnail script
+  are scratch checks, not runtime dependencies or submitted image files.
+- No wallet, key, signing, transaction, payment, posting or deployment was used.
