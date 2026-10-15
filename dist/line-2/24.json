@@ -1,0 +1,30 @@
+{
+  "name": "The Joining Trails",
+  "image": "https://api.imd.fun/artifacts/a1211bf5210aaf31a60eeb67ef85ca50a1f51a7e381badf2cfb4548648b34cbc",
+  "attributes": [
+    {
+      "trait_type": "Cave",
+      "value": "Ice"
+    },
+    {
+      "trait_type": "Wall",
+      "value": "Line 2"
+    },
+    {
+      "trait_type": "Number",
+      "value": 24
+    },
+    {
+      "trait_type": "Left behind",
+      "value": "CSV Merge"
+    },
+    {
+      "trait_type": "Meaning",
+      "value": "A small Pepe watches three pebble trails join as separate edits become one safe result."
+    },
+    {
+      "trait_type": "One thing",
+      "value": "Reconcile CSV datasets by stable keys"
+    }
+  ]
+}

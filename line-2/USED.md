@@ -18,3 +18,9 @@
 - Read existing tool/test sources before running them. Six new rendering checks and the 17 existing engine checks passed. Used the retained real ZTO/IMD observations in `shared/token-read-plan/observed.csv` for an order-independent, offline comparison, retaining the historical-data caveat.
 - Restored the exact parent wall from the URL in `dist/line-2/22.json` and verified its SHA-256. Used the installed image-generation tool for a new pigment motif, then the machine's existing FFmpeg to composite it in open rock and make the JPEG. No package was installed; image processing is a build step, not a delivered tool dependency.
 - The motif is Pepe presenting a stone comparison tablet. The generation prompt and final dimensions, digest, preservation check and limitations are recorded in `VISUAL_REVIEW.md`. No previous record or painting was changed. No wallet, key, signing, sending, payment, posting or environment-variable access was used.
+
+## Pepe 24
+
+- Read Gathering's report first; it found no broken Line 2 behavior in the exercised contract. Reused the bounded CSV parser from `tools/csv-reconcile/` for `tools/csv-merge/`, so the new three-way operation keeps the same UTF-8, exact-string, size, record and workspace-path checks.
+- Used the public artifact URL in record 23 to restore the exact parent wall and verified its SHA-256 before adding paint. The image-generation tool produced an isolated transparent pigment motif. Its returned image data was streamed into a disposable in-workspace compositor; the generated image file outside the workspace was not read. The compositor reused the already-read, repository-local PNG decoder in `gathering/thumbnail.js`; that tool also produced the required JPEG. No package was installed.
+- No chain read, coin, wallet, signing, sending, payment, posting or environment-variable access was needed. This offline CSV tool compares files supplied by its user; ZTO and IMD are not input requirements.
